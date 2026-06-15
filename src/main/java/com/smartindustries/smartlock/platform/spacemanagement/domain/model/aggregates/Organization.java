@@ -13,8 +13,10 @@ public class Organization extends AbstractDomainAggregateRoot<Organization> {
     @Setter
     private Long id;
 
+    @Setter
     private GenericName name;
 
+    @Setter
     private String description;
 
     public Organization() {
