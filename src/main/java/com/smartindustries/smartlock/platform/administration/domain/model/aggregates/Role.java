@@ -3,6 +3,7 @@ package com.smartindustries.smartlock.platform.administration.domain.model.aggre
 import com.smartindustries.smartlock.platform.administration.domain.model.events.RootRoleCreatedEvent;
 import com.smartindustries.smartlock.platform.administration.domain.model.valueobjects.RolePermissions;
 import com.smartindustries.smartlock.platform.shared.domain.model.aggregates.AbstractDomainAggregateRoot;
+import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.GenericName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,7 +17,7 @@ public class Role extends AbstractDomainAggregateRoot<Role> {
     private Long organizationId;
 
     @Setter
-    private String name;
+    private GenericName name;
 
     @Setter
     private RolePermissions permissions;
@@ -30,7 +31,7 @@ public class Role extends AbstractDomainAggregateRoot<Role> {
     public static Role createRoot(Long organizationId) {
         var role = new Role();
         role.organizationId = organizationId;
-        role.name = "Root Admin";
+        role.name = new GenericName("Root Admin");
         role.permissions = new RolePermissions(true, true, true);
         role.deletable = false;
         return role;
