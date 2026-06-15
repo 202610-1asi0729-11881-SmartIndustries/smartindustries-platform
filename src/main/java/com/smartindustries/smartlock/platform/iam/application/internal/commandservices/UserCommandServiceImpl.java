@@ -9,6 +9,7 @@ import com.smartindustries.smartlock.platform.iam.domain.repositories.UserReposi
 import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
 import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.Email;
+import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.Password;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -28,12 +29,13 @@ public class UserCommandServiceImpl implements UserCommandService {
     public Result<User, ApplicationError> handle(SignUpCommand command) {
         try {
             var email = new Email(command.email());
+            var password = new Password(command.password());
 
             if (userRepository.existsByEmail(email)) {
                 return Result.failure(ApplicationError.conflict("User", "Email already exists"));
             }
 
-            var user = new User(command.firstName(), command.lastName(), hashingService.encode(command.password()), command.email());
+            var user = new User(command.firstName(), command.lastName(), hashingService.encode(password.value()), command.email());
             userRepository.save(user);
             return userRepository.findUserByEmail(email)
                     .<Result<User, ApplicationError>>map(Result::success)
