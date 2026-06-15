@@ -1,0 +1,42 @@
+package com.smartindustries.smartlock.platform.administration.domain.model.aggregates;
+
+import com.smartindustries.smartlock.platform.administration.domain.model.events.RootRoleCreatedEvent;
+import com.smartindustries.smartlock.platform.administration.domain.model.valueobjects.RolePermissions;
+import com.smartindustries.smartlock.platform.shared.domain.model.aggregates.AbstractDomainAggregateRoot;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+public class Role extends AbstractDomainAggregateRoot<Role> {
+
+    @Setter
+    private Long id;
+
+    @Setter
+    private Long organizationId;
+
+    @Setter
+    private String name;
+
+    @Setter
+    private RolePermissions permissions;
+
+    @Setter
+    private boolean deletable;
+
+    public Role() {
+    }
+
+    public static Role createRoot(Long organizationId) {
+        var role = new Role();
+        role.organizationId = organizationId;
+        role.name = "Root Admin";
+        role.permissions = new RolePermissions(true, true, true);
+        role.deletable = false;
+        return role;
+    }
+
+    public void onCreateRoot(Long creatorUserId) {
+        this.registerDomainEvent(new RootRoleCreatedEvent(this, this.getId(), this.organizationId, creatorUserId));
+    }
+}
