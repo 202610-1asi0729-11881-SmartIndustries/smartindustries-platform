@@ -42,7 +42,7 @@ public class Role extends AbstractDomainAggregateRoot<Role> {
         role.organizationId = organizationId;
         role.name = new GenericName("Basic");
         role.permissions = new RolePermissions(false, false, false);
-        role.deletable = true;
+        role.deletable = false;
         return role;
     }
 
