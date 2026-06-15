@@ -1,4 +1,4 @@
-package com.smartindustries.smartlock.platform.iam.application.internal.outboundservices;
+package com.smartindustries.smartlock.platform.iam.application.internal.outboundservices.hashing;
 
 /**
  * Outbound port for password hashing operations required by the IAM application layer.
