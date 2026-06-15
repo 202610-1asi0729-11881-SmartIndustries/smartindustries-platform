@@ -37,6 +37,15 @@ public class Role extends AbstractDomainAggregateRoot<Role> {
         return role;
     }
 
+    public static Role createBasic(Long organizationId) {
+        var role = new Role();
+        role.organizationId = organizationId;
+        role.name = new GenericName("Basic");
+        role.permissions = new RolePermissions(false, false, false);
+        role.deletable = true;
+        return role;
+    }
+
     public void onCreateRoot(Long creatorUserId) {
         this.registerDomainEvent(new RootRoleCreatedEvent(this, this.getId(), this.organizationId, creatorUserId));
     }
