@@ -33,7 +33,7 @@ public class RoleRepositoryImpl implements RoleRepository {
         var saved = jpaRepository.save(entity);
         var result = RolePersistenceAssembler.toDomainFromPersistence(saved);
 
-        if (isNew) {
+        if (isNew && creatorUserId != null) {
             result.onCreateRoot(creatorUserId);
             result.domainEvents().forEach(eventPublisher::publishEvent);
             result.clearDomainEvents();
