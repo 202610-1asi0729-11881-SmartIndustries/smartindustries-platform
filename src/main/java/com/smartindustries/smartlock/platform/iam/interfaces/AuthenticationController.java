@@ -1,8 +1,12 @@
 package com.smartindustries.smartlock.platform.iam.interfaces;
 
 import com.smartindustries.smartlock.platform.iam.application.commandservices.UserCommandService;
+import com.smartindustries.smartlock.platform.iam.interfaces.resources.AuthenticatedUserResource;
+import com.smartindustries.smartlock.platform.iam.interfaces.resources.SignInResource;
 import com.smartindustries.smartlock.platform.iam.interfaces.resources.SignUpResource;
 import com.smartindustries.smartlock.platform.iam.interfaces.resources.UserResource;
+import com.smartindustries.smartlock.platform.iam.interfaces.transform.AuthenticatedUserResourceFromEntityAssembler;
+import com.smartindustries.smartlock.platform.iam.interfaces.transform.SignInCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.iam.interfaces.transform.SignUpCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.iam.interfaces.transform.UserResourceFromEntityAssembler;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ResponseEntityAssembler;
@@ -69,5 +73,46 @@ public class AuthenticationController {
             HttpStatus.CREATED
         );
 
+    }
+
+
+    /**
+     * Handles the sign-in request.
+     * @param signInResource the sign-in request body with email and password.
+     * @return the authenticated user resource with JWT token.
+     */
+    @PostMapping("/sign-in")
+    @Operation(
+        summary = "User sign-in",
+        description = "Authenticates a user with provided credentials and returns JWT token for subsequent requests."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "User authenticated successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = AuthenticatedUserResource.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid credentials or malformed request",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "User not found with provided email",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    public ResponseEntity<?> signIn(@RequestBody SignInResource signInResource) {
+        var signInCommand = SignInCommandFromResourceAssembler.toCommandFromResource(signInResource);
+        var result = userCommandService.handle(signInCommand);
+        return ResponseEntityAssembler.toResponseEntityFromResult(
+            result,
+            auth -> AuthenticatedUserResourceFromEntityAssembler.toResourceFromEntity(auth.getLeft(), auth.getRight()),
+            HttpStatus.OK
+        );
     }
 }
