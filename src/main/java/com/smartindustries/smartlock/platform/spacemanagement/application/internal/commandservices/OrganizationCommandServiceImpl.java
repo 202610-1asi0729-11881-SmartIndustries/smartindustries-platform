@@ -28,7 +28,7 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             }
 
             var organization = new Organization(command);
-            organizationRepository.save(organization);
+            organizationRepository.save(organization, command.creatorUserId());
             return Result.success(organization);
         } catch (IllegalArgumentException e) {
             return Result.failure(ApplicationError.validationError("Organization", e.getMessage()));

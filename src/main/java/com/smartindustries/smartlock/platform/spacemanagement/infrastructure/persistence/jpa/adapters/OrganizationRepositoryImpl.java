@@ -28,14 +28,14 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     }
 
     @Override
-    public Organization save(Organization organization) {
+    public Organization save(Organization organization, Long creatorUserId) {
         boolean isNew = organization.getId() == null;
         var persistenceEntity = OrganizationPersistenceAssembler.toPersistenceFromDomain(organization);
         var saved = jpaRepository.save(persistenceEntity);
         var result = OrganizationPersistenceAssembler.toDomainFromPersistence(saved);
 
         if (isNew) {
-            result.onCreate();
+            result.onCreate(creatorUserId);
             result.domainEvents().forEach(eventPublisher::publishEvent);
             result.clearDomainEvents();
         }

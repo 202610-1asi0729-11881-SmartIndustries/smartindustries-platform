@@ -27,7 +27,7 @@ public class Organization extends AbstractDomainAggregateRoot<Organization> {
         this.description = command.description();
     }
 
-    public void onCreate() {
-        this.registerDomainEvent(new OrganizationCreatedEvent(this, this.getId(), this.name.value()));
+    public void onCreate(Long creatorUserId) {
+        this.registerDomainEvent(new OrganizationCreatedEvent(this, this.getId(), this.name.value(), creatorUserId));
     }
 }
