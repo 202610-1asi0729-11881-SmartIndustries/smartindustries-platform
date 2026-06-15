@@ -30,7 +30,7 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public boolean existsByEmail(String email) {
-        return userPersistenceRepository.existsByEmail(new Email(email));
+    public boolean existsByEmail(Email email) {
+        return userPersistenceRepository.existsByEmail(email);
     }
 }

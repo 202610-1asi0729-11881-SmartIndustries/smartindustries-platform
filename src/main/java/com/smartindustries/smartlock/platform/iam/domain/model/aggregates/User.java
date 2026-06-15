@@ -1,4 +1,4 @@
-package com.smartindustries.smartlock.platform.iam.domain.aggregates;
+package com.smartindustries.smartlock.platform.iam.domain.model.aggregates;
 
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.Email;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.FullName;
