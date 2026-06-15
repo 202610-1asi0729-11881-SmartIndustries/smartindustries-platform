@@ -1,5 +1,6 @@
 package com.smartindustries.smartlock.platform.spacemanagement.infrastructure.persistence.jpa.entities;
 
+import com.smartindustries.smartlock.platform.administration.infrastructure.persistence.jpa.entities.RolePersistenceEntity;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.GenericName;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.converters.GenericNamePersistenceConverter;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.entities.AuditableAbstractPersistenceEntity;
@@ -7,6 +8,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "organizations")
@@ -21,4 +25,7 @@ public class OrganizationPersistenceEntity extends AuditableAbstractPersistenceE
 
     @Column(name = "description", nullable = false, length = 500)
     private String description;
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<RolePersistenceEntity> roles = new ArrayList<>();
 }
