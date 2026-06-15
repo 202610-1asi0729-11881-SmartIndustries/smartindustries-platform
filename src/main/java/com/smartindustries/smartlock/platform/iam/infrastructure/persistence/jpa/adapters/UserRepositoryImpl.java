@@ -7,6 +7,8 @@ import com.smartindustries.smartlock.platform.iam.infrastructure.persistence.jpa
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.Email;
 import org.springframework.stereotype.Repository;
 
+import java.util.Optional;
+
 @Repository
 public class UserRepositoryImpl implements UserRepository {
 
@@ -14,6 +16,11 @@ public class UserRepositoryImpl implements UserRepository {
 
     public UserRepositoryImpl(UserPersistenceRepository userPersistenceRepository){
         this.userPersistenceRepository = userPersistenceRepository;
+    }
+
+    @Override
+    public Optional<User> findUserByEmail(Email email) {
+        return userPersistenceRepository.findByEmail(email).map(UserPersistenceAssembler::toDomainFromPersistence);
     }
 
     @Override
