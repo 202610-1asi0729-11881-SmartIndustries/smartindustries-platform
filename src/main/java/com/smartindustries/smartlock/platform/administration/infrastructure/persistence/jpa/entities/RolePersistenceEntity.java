@@ -10,6 +10,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "roles")
 @Getter
@@ -35,4 +38,7 @@ public class RolePersistenceEntity extends AuditableAbstractPersistenceEntity {
 
     @Column(name = "deletable", nullable = false)
     private boolean deletable;
+
+    @OneToMany(mappedBy = "role", cascade = CascadeType.ALL)
+    private List<MembershipPersistenceEntity> memberships = new ArrayList<>();
 }
