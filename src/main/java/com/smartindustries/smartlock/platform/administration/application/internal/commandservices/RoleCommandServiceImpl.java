@@ -22,8 +22,8 @@ public class RoleCommandServiceImpl implements RoleCommandService {
     public Result<Role, ApplicationError> handle(CreateRootRoleCommand command) {
         try {
             var role = Role.createRoot(command.organizationId());
-            roleRepository.save(role, command.creatorUserId());
-            return Result.success(role);
+            var savedRole = roleRepository.save(role, command.creatorUserId());
+            return Result.success(savedRole);
         } catch (IllegalArgumentException e) {
             return Result.failure(ApplicationError.validationError("Role", e.getMessage()));
         } catch (Exception e) {
@@ -35,8 +35,8 @@ public class RoleCommandServiceImpl implements RoleCommandService {
     public Result<Role, ApplicationError> handle(CreateBasicRoleCommand command) {
         try {
             var role = Role.createBasic(command.organizationId());
-            roleRepository.save(role, null);
-            return Result.success(role);
+            var savedRole = roleRepository.save(role, null);
+            return Result.success(savedRole);
         } catch (IllegalArgumentException e) {
             return Result.failure(ApplicationError.validationError("Role", e.getMessage()));
         } catch (Exception e) {

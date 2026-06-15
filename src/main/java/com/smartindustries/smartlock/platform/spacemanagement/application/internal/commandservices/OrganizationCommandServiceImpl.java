@@ -28,8 +28,8 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             }
 
             var organization = new Organization(command);
-            organizationRepository.save(organization, command.creatorUserId());
-            return Result.success(organization);
+            var savedOrganization = organizationRepository.save(organization, command.creatorUserId());
+            return Result.success(savedOrganization);
         } catch (IllegalArgumentException e) {
             return Result.failure(ApplicationError.validationError("Organization", e.getMessage()));
         } catch (Exception e) {

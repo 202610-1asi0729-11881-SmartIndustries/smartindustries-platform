@@ -21,8 +21,8 @@ public class MembershipCommandServiceImpl implements MembershipCommandService {
     public Result<Membership, ApplicationError> handle(AddRootUserToOrganizationCommand command) {
         try {
             var membership = new Membership(command);
-            membershipRepository.save(membership);
-            return Result.success(membership);
+            var savedMembership = membershipRepository.save(membership);
+            return Result.success(savedMembership);
         } catch (IllegalArgumentException e) {
             return Result.failure(ApplicationError.validationError("Membership", e.getMessage()));
         } catch (Exception e) {
