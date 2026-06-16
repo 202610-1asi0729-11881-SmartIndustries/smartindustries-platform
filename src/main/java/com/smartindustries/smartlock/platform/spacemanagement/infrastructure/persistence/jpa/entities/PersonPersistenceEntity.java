@@ -32,4 +32,7 @@ public class PersonPersistenceEntity extends AuditableAbstractPersistenceEntity 
     @Column(name = "identity_document", nullable = false, length = 50)
     private IdentityDocument identityDocument;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "access_group_id")
+    private AccessGroupPersistenceEntity accessGroup;
 }
