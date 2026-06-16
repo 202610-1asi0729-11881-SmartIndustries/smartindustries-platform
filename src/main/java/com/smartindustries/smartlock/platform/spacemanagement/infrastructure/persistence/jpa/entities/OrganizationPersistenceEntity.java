@@ -1,5 +1,6 @@
 package com.smartindustries.smartlock.platform.spacemanagement.infrastructure.persistence.jpa.entities;
 
+import com.smartindustries.smartlock.platform.access.infrastructure.persistence.jpa.entities.AccessGroupPersistenceEntity;
 import com.smartindustries.smartlock.platform.administration.infrastructure.persistence.jpa.entities.RolePersistenceEntity;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.GenericName;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.converters.GenericNamePersistenceConverter;
@@ -31,4 +32,10 @@ public class OrganizationPersistenceEntity extends AuditableAbstractPersistenceE
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SitePersistenceEntity> sites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PersonPersistenceEntity> people = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccessGroupPersistenceEntity> accessGroups = new ArrayList<>();
 }
