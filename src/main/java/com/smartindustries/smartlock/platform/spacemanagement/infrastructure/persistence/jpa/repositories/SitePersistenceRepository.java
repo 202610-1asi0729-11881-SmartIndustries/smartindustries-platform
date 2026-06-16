@@ -4,6 +4,9 @@ import com.smartindustries.smartlock.platform.spacemanagement.infrastructure.per
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface SitePersistenceRepository extends JpaRepository<SitePersistenceEntity, Long> {
+    List<SitePersistenceEntity> findByOrganization_Id(Long organizationId);
 }
