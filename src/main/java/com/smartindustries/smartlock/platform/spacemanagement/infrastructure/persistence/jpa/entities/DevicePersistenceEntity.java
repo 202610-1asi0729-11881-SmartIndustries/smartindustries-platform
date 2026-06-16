@@ -3,32 +3,33 @@ package com.smartindustries.smartlock.platform.spacemanagement.infrastructure.pe
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.GenericName;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.converters.GenericNamePersistenceConverter;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.entities.AuditableAbstractPersistenceEntity;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.valueobjects.DeviceMode;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.valueobjects.DeviceStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
-@Table(name = "sites")
+@Table(name = "devices")
 @Getter
 @Setter
 @NoArgsConstructor
-public class SitePersistenceEntity extends AuditableAbstractPersistenceEntity {
+public class DevicePersistenceEntity extends AuditableAbstractPersistenceEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "organization_id", nullable = false)
-    private OrganizationPersistenceEntity organization;
+    @JoinColumn(name = "site_id", nullable = false)
+    private SitePersistenceEntity site;
 
     @Convert(converter = GenericNamePersistenceConverter.class)
     @Column(name = "name", nullable = false, length = 100)
     private GenericName name;
 
-    @Column(name = "description", nullable = false, length = 500)
-    private String description;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 50)
+    private DeviceStatus status;
 
-    @OneToMany(mappedBy = "site", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<DevicePersistenceEntity> devices = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(name = "mode", nullable = false, length = 50)
+    private DeviceMode mode;
 }
