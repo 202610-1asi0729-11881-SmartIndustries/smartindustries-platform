@@ -31,4 +31,10 @@ public class OrganizationPersistenceEntity extends AuditableAbstractPersistenceE
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SitePersistenceEntity> sites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PersonPersistenceEntity> people = new ArrayList<>();
+
+    @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AccessGroupPersistenceEntity> accessGroups = new ArrayList<>();
 }
