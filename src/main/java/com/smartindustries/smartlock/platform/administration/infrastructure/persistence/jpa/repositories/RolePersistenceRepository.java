@@ -4,6 +4,9 @@ import com.smartindustries.smartlock.platform.administration.infrastructure.pers
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface RolePersistenceRepository extends JpaRepository<RolePersistenceEntity, Long> {
+    List<RolePersistenceEntity> findByOrganization_Id(Long organizationId);
 }
