@@ -1,6 +1,7 @@
 package com.smartindustries.smartlock.platform.administration.domain.model.aggregates;
 
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.AddRoleToOrganizationCommand;
+import com.smartindustries.smartlock.platform.administration.domain.model.commands.UpdateRoleInformationCommand;
 import com.smartindustries.smartlock.platform.administration.domain.model.events.RootRoleCreatedEvent;
 import com.smartindustries.smartlock.platform.administration.domain.model.valueobjects.RolePermissions;
 import com.smartindustries.smartlock.platform.shared.domain.model.aggregates.AbstractDomainAggregateRoot;
@@ -58,5 +59,10 @@ public class Role extends AbstractDomainAggregateRoot<Role> {
 
     public void onCreateRoot(Long creatorUserId) {
         this.registerDomainEvent(new RootRoleCreatedEvent(this, this.getId(), this.organizationId, creatorUserId));
+    }
+
+    public void updateInformation(UpdateRoleInformationCommand command) {
+        this.name = new GenericName(command.name());
+        this.permissions = new RolePermissions(command.canCreateSites(), command.canCreatePeople(), command.canConnectDevices());
     }
 }
