@@ -29,4 +29,10 @@ public class MembershipRepositoryImpl implements MembershipRepository {
         var saved = jpaRepository.save(entity);
         return MembershipPersistenceAssembler.toDomainFromPersistence(saved);
     }
+
+    @Override
+    public Optional<Membership> findByUserIdAndOrganizationId(Long userId, Long organizationId) {
+        return jpaRepository.findByUser_IdAndRole_Organization_Id(userId, organizationId)
+                .map(MembershipPersistenceAssembler::toDomainFromPersistence);
+    }
 }

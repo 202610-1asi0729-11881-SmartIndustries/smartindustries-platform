@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface MembershipRepository {
     Optional<Membership> findById(Long id);
     Membership save(Membership membership);
+    Optional<Membership> findByUserIdAndOrganizationId(Long userId, Long organizationId);
 }
