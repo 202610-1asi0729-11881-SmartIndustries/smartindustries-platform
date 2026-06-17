@@ -6,9 +6,11 @@ import com.smartindustries.smartlock.platform.spacemanagement.application.querys
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queries.GetSitesByOrganizationIdQuery;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.AddSiteToOrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.SiteResource;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.UpdateSiteInformationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.AddSiteToOrganizationCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.SiteResourceFromEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.SiteResourceFromPersistenceAssembler;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.UpdateSiteInformationCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -90,5 +92,39 @@ public class SitesController {
                 result,
                 SiteResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{siteId}")
+    @Operation(
+        summary = "Update site information",
+        description = "Updates the name and description of an existing site."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Site updated successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = SiteResource.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Site not found",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    public ResponseEntity<?> updateSite(@PathVariable Long siteId, @RequestBody UpdateSiteInformationResource resource) {
+        var command = UpdateSiteInformationCommandFromResourceAssembler.toCommandFromResource(resource, siteId);
+        var result = siteCommandService.handle(command);
+        return ResponseEntityAssembler.toResponseEntityFromResult(
+                result,
+                SiteResourceFromEntityAssembler::toResourceFromEntity,
+                HttpStatus.OK);
     }
 }
