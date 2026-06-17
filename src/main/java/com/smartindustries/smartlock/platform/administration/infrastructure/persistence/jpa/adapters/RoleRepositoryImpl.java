@@ -4,6 +4,7 @@ import com.smartindustries.smartlock.platform.administration.domain.model.aggreg
 import com.smartindustries.smartlock.platform.administration.domain.repositories.RoleRepository;
 import com.smartindustries.smartlock.platform.administration.infrastructure.persistence.jpa.assemblers.RolePersistenceAssembler;
 import com.smartindustries.smartlock.platform.administration.infrastructure.persistence.jpa.repositories.RolePersistenceRepository;
+import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.GenericName;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Repository;
 
@@ -39,5 +40,10 @@ public class RoleRepositoryImpl implements RoleRepository {
             result.clearDomainEvents();
         }
         return result;
+    }
+
+    @Override
+    public boolean existsByOrganizationIdAndName(Long organizationId, GenericName name) {
+        return jpaRepository.existsByOrganization_IdAndName(organizationId, name);
     }
 }
