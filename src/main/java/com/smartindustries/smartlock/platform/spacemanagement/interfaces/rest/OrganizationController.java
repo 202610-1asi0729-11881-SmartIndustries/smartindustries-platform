@@ -10,9 +10,11 @@ import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queri
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.CreateOrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.OrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.OrganizationSummaryResource;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.UpdateOrganizationInformationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.CreateOrganizationCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.OrganizationResourceFromEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.OrganizationSummaryResourceFromPersistenceAssembler;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.UpdateOrganizationInformationCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -24,7 +26,9 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -122,5 +126,39 @@ public class OrganizationController {
                 .map(OrganizationSummaryResourceFromPersistenceAssembler::toResourceFromPersistence)
                 .toList();
         return ResponseEntity.ok(resources);
+    }
+
+    @PutMapping("/{organizationId}")
+    @Operation(
+        summary = "Update organization information",
+        description = "Updates the name and description of an existing organization."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Organization updated successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = OrganizationResource.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Organization not found",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    public ResponseEntity<?> updateOrganization(@PathVariable Long organizationId, @RequestBody UpdateOrganizationInformationResource resource) {
+        var command = UpdateOrganizationInformationCommandFromResourceAssembler.toCommandFromResource(resource, organizationId);
+        var result = organizationCommandService.handle(command);
+        return ResponseEntityAssembler.toResponseEntityFromResult(
+                result,
+                OrganizationResourceFromEntityAssembler::toResourceFromEntity,
+                HttpStatus.OK);
     }
 }
