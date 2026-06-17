@@ -39,6 +39,6 @@ public class PersonPersistenceEntity extends AuditableAbstractPersistenceEntity 
     @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ScheduleDayPersistenceEntity> scheduleDays = new ArrayList<>();
 
-    @OneToOne(mappedBy = "person")
+    @OneToOne(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
     private PersonAccessPersistenceEntity personAccess;
 }
