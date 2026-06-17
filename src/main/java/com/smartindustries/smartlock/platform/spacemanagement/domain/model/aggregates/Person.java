@@ -4,6 +4,7 @@ import com.smartindustries.smartlock.platform.shared.domain.model.aggregates.Abs
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.FullName;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.IdentityDocument;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.AddPersonToOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.events.PersonAddedToOrganizationEvent;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -32,5 +33,9 @@ public class Person extends AbstractDomainAggregateRoot<Person> {
         this.organizationId = command.organizationId();
         this.name = new FullName(command.firstName(), command.lastName());
         this.identityDocument = new IdentityDocument(command.identityDocument());
+    }
+
+    public void onAddedToOrganization() {
+        this.registerDomainEvent(new PersonAddedToOrganizationEvent(this, this.getId(), this.getName().getFullName(), this.getIdentityDocument().value()));
     }
 }
