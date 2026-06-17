@@ -6,9 +6,11 @@ import com.smartindustries.smartlock.platform.spacemanagement.application.querys
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queries.GetPeopleByOrganizationIdQuery;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.AddPersonToOrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.PersonResource;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.UpdatePersonInformationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.AddPersonToOrganizationCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.PersonResourceFromEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.PersonResourceFromPersistenceAssembler;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.UpdatePersonInformationCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -90,5 +92,39 @@ public class PersonController {
                 result,
                 PersonResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{personId}")
+    @Operation(
+        summary = "Update person information",
+        description = "Updates the name and identity document of an existing person."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Person updated successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = PersonResource.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Person not found",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    public ResponseEntity<?> updatePerson(@PathVariable Long personId, @RequestBody UpdatePersonInformationResource resource) {
+        var command = UpdatePersonInformationCommandFromResourceAssembler.toCommandFromResource(resource, personId);
+        var result = personCommandService.handle(command);
+        return ResponseEntityAssembler.toResponseEntityFromResult(
+                result,
+                PersonResourceFromEntityAssembler::toResourceFromEntity,
+                HttpStatus.OK);
     }
 }
