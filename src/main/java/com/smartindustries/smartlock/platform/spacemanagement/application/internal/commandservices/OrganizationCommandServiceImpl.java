@@ -6,6 +6,7 @@ import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.G
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.OrganizationCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Organization;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.CreateOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateOrganizationInformationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.repositories.OrganizationRepository;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +35,24 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             return Result.failure(ApplicationError.validationError("Organization", e.getMessage()));
         } catch (Exception e) {
             return Result.failure(ApplicationError.unexpected("organization-creation", e.getMessage()));
+        }
+    }
+
+    @Override
+    public Result<Organization, ApplicationError> handle(UpdateOrganizationInformationCommand command) {
+        try {
+            var organization = organizationRepository.findById(command.organizationId());
+            if (organization.isEmpty()) {
+                return Result.failure(ApplicationError.notFound("Organization", command.organizationId().toString()));
+            }
+
+            organization.get().updateInformation(command);
+            var saved = organizationRepository.save(organization.get(), null);
+            return Result.success(saved);
+        } catch (IllegalArgumentException e) {
+            return Result.failure(ApplicationError.validationError("Organization", e.getMessage()));
+        } catch (Exception e) {
+            return Result.failure(ApplicationError.unexpected("organization-update", e.getMessage()));
         }
     }
 }
