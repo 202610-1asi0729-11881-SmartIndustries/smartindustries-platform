@@ -24,4 +24,8 @@ public class Membership extends AbstractDomainAggregateRoot<Membership> {
         this.userId = command.userId();
         this.roleId = command.roleId();
     }
+
+    public void updateRole(Long newRoleId) {
+        this.roleId = newRoleId;
+    }
 }
