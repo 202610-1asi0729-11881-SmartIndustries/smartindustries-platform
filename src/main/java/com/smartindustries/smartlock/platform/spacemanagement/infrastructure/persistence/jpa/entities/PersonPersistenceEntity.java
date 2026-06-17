@@ -1,6 +1,7 @@
 package com.smartindustries.smartlock.platform.spacemanagement.infrastructure.persistence.jpa.entities;
 
 import com.smartindustries.smartlock.platform.access.infrastructure.persistence.jpa.entities.AccessGroupPersistenceEntity;
+import com.smartindustries.smartlock.platform.report.infrastructure.persistence.jpa.entities.ScheduleDayPersistenceEntity;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.FullName;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.IdentityDocument;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.converters.IdentityDocumentPersistenceConverter;
@@ -9,6 +10,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "people")
@@ -35,4 +39,7 @@ public class PersonPersistenceEntity extends AuditableAbstractPersistenceEntity 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "access_group_id")
     private AccessGroupPersistenceEntity accessGroup;
+
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ScheduleDayPersistenceEntity> scheduleDays = new ArrayList<>();
 }
