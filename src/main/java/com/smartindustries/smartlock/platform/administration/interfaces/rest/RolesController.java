@@ -5,9 +5,11 @@ import com.smartindustries.smartlock.platform.administration.application.queryse
 import com.smartindustries.smartlock.platform.administration.domain.model.queries.GetRolesByOrganizationIdQuery;
 import com.smartindustries.smartlock.platform.administration.interfaces.rest.resources.AddRoleToOrganizationResource;
 import com.smartindustries.smartlock.platform.administration.interfaces.rest.resources.RoleResource;
+import com.smartindustries.smartlock.platform.administration.interfaces.rest.resources.UpdateRoleInformationResource;
 import com.smartindustries.smartlock.platform.administration.interfaces.rest.transform.AddRoleToOrganizationCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.administration.interfaces.rest.transform.RoleResourceFromEntityAssembler;
 import com.smartindustries.smartlock.platform.administration.interfaces.rest.transform.RoleResourceFromPersistenceAssembler;
+import com.smartindustries.smartlock.platform.administration.interfaces.rest.transform.UpdateRoleInformationCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ResponseEntityAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -90,5 +92,39 @@ public class RolesController {
                 result,
                 RoleResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{roleId}")
+    @Operation(
+        summary = "Update role information",
+        description = "Updates the name and permissions of an existing role. The deletable flag cannot be modified."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Role updated successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = RoleResource.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Role not found",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    public ResponseEntity<?> updateRole(@PathVariable Long roleId, @RequestBody UpdateRoleInformationResource resource) {
+        var command = UpdateRoleInformationCommandFromResourceAssembler.toCommandFromResource(resource, roleId);
+        var result = roleCommandService.handle(command);
+        return ResponseEntityAssembler.toResponseEntityFromResult(
+                result,
+                RoleResourceFromEntityAssembler::toResourceFromEntity,
+                HttpStatus.OK);
     }
 }
