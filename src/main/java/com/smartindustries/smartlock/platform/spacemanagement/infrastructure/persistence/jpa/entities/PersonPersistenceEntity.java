@@ -1,6 +1,6 @@
 package com.smartindustries.smartlock.platform.spacemanagement.infrastructure.persistence.jpa.entities;
 
-import com.smartindustries.smartlock.platform.access.infrastructure.persistence.jpa.entities.AccessGroupPersistenceEntity;
+import com.smartindustries.smartlock.platform.access.infrastructure.persistence.jpa.entities.PersonAccessPersistenceEntity;
 import com.smartindustries.smartlock.platform.report.infrastructure.persistence.jpa.entities.ScheduleDayPersistenceEntity;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.FullName;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.IdentityDocument;
@@ -36,10 +36,9 @@ public class PersonPersistenceEntity extends AuditableAbstractPersistenceEntity 
     @Column(name = "identity_document", nullable = false, length = 50)
     private IdentityDocument identityDocument;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "access_group_id")
-    private AccessGroupPersistenceEntity accessGroup;
-
-    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "person", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<ScheduleDayPersistenceEntity> scheduleDays = new ArrayList<>();
+
+    @OneToOne(mappedBy = "person")
+    private PersonAccessPersistenceEntity personAccess;
 }

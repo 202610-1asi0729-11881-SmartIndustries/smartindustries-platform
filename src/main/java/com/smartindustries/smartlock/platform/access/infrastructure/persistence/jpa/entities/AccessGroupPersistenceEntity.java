@@ -4,7 +4,6 @@ import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.G
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.converters.GenericNamePersistenceConverter;
 import com.smartindustries.smartlock.platform.shared.infrastructure.persistence.jpa.entities.AuditableAbstractPersistenceEntity;
 import com.smartindustries.smartlock.platform.spacemanagement.infrastructure.persistence.jpa.entities.OrganizationPersistenceEntity;
-import com.smartindustries.smartlock.platform.spacemanagement.infrastructure.persistence.jpa.entities.PersonPersistenceEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -31,6 +30,6 @@ public class AccessGroupPersistenceEntity extends AuditableAbstractPersistenceEn
     @Column(name = "description", nullable = false, length = 500)
     private String description;
 
-    @OneToMany(mappedBy = "accessGroup", fetch = FetchType.LAZY)
-    private List<PersonPersistenceEntity> people = new ArrayList<>();
+    @OneToMany(mappedBy = "accessGroup")
+    private List<PersonAccessPersistenceEntity> personAccesses = new ArrayList<>();
 }
