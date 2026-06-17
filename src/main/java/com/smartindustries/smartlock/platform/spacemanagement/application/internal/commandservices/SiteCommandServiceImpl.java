@@ -5,6 +5,7 @@ import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.SiteCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Site;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.AddSiteToOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateSiteInformationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.repositories.OrganizationRepository;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.repositories.SiteRepository;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,24 @@ public class SiteCommandServiceImpl implements SiteCommandService {
             return Result.failure(ApplicationError.validationError("Site", e.getMessage()));
         } catch (Exception e) {
             return Result.failure(ApplicationError.unexpected("site-creation", e.getMessage()));
+        }
+    }
+
+    @Override
+    public Result<Site, ApplicationError> handle(UpdateSiteInformationCommand command) {
+        try {
+            var site = siteRepository.findById(command.siteId());
+            if (site.isEmpty()) {
+                return Result.failure(ApplicationError.notFound("Site", command.siteId().toString()));
+            }
+
+            site.get().updateInformation(command);
+            var saved = siteRepository.save(site.get());
+            return Result.success(saved);
+        } catch (IllegalArgumentException e) {
+            return Result.failure(ApplicationError.validationError("Site", e.getMessage()));
+        } catch (Exception e) {
+            return Result.failure(ApplicationError.unexpected("site-update", e.getMessage()));
         }
     }
 }
