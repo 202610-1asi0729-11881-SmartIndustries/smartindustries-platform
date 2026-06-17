@@ -3,6 +3,7 @@ package com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggr
 import com.smartindustries.smartlock.platform.shared.domain.model.aggregates.AbstractDomainAggregateRoot;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.GenericName;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.ConnectDeviceToSiteCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateDeviceInformationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.valueobjects.DeviceMode;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.valueobjects.DeviceStatus;
 import lombok.Getter;
@@ -32,6 +33,12 @@ public class Device extends AbstractDomainAggregateRoot<Device> {
 
     public Device(ConnectDeviceToSiteCommand command) {
         this();
+        this.siteId = command.siteId();
+        this.name = new GenericName(command.name());
+        this.mode = DeviceMode.valueOf(command.mode().toUpperCase());
+    }
+
+    public void updateInformation(UpdateDeviceInformationCommand command) {
         this.siteId = command.siteId();
         this.name = new GenericName(command.name());
         this.mode = DeviceMode.valueOf(command.mode().toUpperCase());
