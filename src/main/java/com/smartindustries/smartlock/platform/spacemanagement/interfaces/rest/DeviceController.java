@@ -7,9 +7,11 @@ import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queri
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.ConnectDeviceToSiteResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.DeviceResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.DeviceWithSiteResource;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.UpdateDeviceInformationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.ConnectDeviceToSiteCommandFromResourceAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.DeviceResourceFromEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.DeviceWithSiteResourceFromPersistenceAssembler;
+import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.transform.UpdateDeviceInformationCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -91,5 +93,39 @@ public class DeviceController {
                 result,
                 DeviceResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{deviceId}")
+    @Operation(
+        summary = "Update device information",
+        description = "Updates the site, name and mode of an existing device."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "200",
+            description = "Device updated successfully",
+            content = @Content(
+                mediaType = "application/json",
+                schema = @Schema(implementation = DeviceResource.class)
+            )
+        ),
+        @ApiResponse(
+            responseCode = "400",
+            description = "Invalid input data",
+            content = @Content(mediaType = "application/json")
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Device or site not found",
+            content = @Content(mediaType = "application/json")
+        )
+    })
+    public ResponseEntity<?> updateDevice(@PathVariable Long deviceId, @RequestBody UpdateDeviceInformationResource resource) {
+        var command = UpdateDeviceInformationCommandFromResourceAssembler.toCommandFromResource(resource, deviceId);
+        var result = deviceCommandService.handle(command);
+        return ResponseEntityAssembler.toResponseEntityFromResult(
+                result,
+                DeviceResourceFromEntityAssembler::toResourceFromEntity,
+                HttpStatus.OK);
     }
 }
