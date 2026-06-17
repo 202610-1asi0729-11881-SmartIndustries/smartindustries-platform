@@ -4,6 +4,7 @@ import com.smartindustries.smartlock.platform.administration.domain.model.aggreg
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.AddRoleToOrganizationCommand;
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.CreateBasicRoleCommand;
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.CreateRootRoleCommand;
+import com.smartindustries.smartlock.platform.administration.domain.model.commands.UpdateRoleInformationCommand;
 import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
 import com.smartindustries.smartlock.platform.shared.application.result.Result;
 
@@ -11,4 +12,5 @@ public interface RoleCommandService {
     Result<Role, ApplicationError> handle(CreateRootRoleCommand command);
     Result<Role, ApplicationError> handle(CreateBasicRoleCommand command);
     Result<Role, ApplicationError> handle(AddRoleToOrganizationCommand command);
+    Result<Role, ApplicationError> handle(UpdateRoleInformationCommand command);
 }

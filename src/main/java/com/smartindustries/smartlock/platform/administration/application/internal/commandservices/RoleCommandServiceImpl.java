@@ -5,6 +5,7 @@ import com.smartindustries.smartlock.platform.administration.domain.model.aggreg
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.AddRoleToOrganizationCommand;
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.CreateBasicRoleCommand;
 import com.smartindustries.smartlock.platform.administration.domain.model.commands.CreateRootRoleCommand;
+import com.smartindustries.smartlock.platform.administration.domain.model.commands.UpdateRoleInformationCommand;
 import com.smartindustries.smartlock.platform.administration.domain.repositories.RoleRepository;
 import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
 import com.smartindustries.smartlock.platform.shared.application.result.Result;
@@ -62,6 +63,24 @@ public class RoleCommandServiceImpl implements RoleCommandService {
             return Result.failure(ApplicationError.validationError("Role", e.getMessage()));
         } catch (Exception e) {
             return Result.failure(ApplicationError.unexpected("role-creation", e.getMessage()));
+        }
+    }
+
+    @Override
+    public Result<Role, ApplicationError> handle(UpdateRoleInformationCommand command) {
+        try {
+            var role = roleRepository.findById(command.roleId());
+            if (role.isEmpty()) {
+                return Result.failure(ApplicationError.notFound("Role", command.roleId().toString()));
+            }
+
+            role.get().updateInformation(command);
+            var saved = roleRepository.save(role.get(), null);
+            return Result.success(saved);
+        } catch (IllegalArgumentException e) {
+            return Result.failure(ApplicationError.validationError("Role", e.getMessage()));
+        } catch (Exception e) {
+            return Result.failure(ApplicationError.unexpected("role-update", e.getMessage()));
         }
     }
 }
