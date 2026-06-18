@@ -47,6 +47,11 @@ public class MembershipCommandServiceImpl implements MembershipCommandService {
                 return Result.failure(ApplicationError.validationError("Role", "Role not found or does not belong to this organization"));
             }
 
+            var currentRole = roleRepository.findById(membership.get().getRoleId());
+            if (currentRole.isPresent() && !currentRole.get().isDeletable()) {
+                return Result.failure(ApplicationError.businessRuleViolation("Membership", "Cannot change the role of a root administrator"));
+            }
+
             membership.get().updateRole(command.newRoleId());
             var saved = membershipRepository.save(membership.get());
             return Result.success(saved);
