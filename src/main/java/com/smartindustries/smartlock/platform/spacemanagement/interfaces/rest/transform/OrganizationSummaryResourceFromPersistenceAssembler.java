@@ -10,7 +10,7 @@ public final class OrganizationSummaryResourceFromPersistenceAssembler {
 
     public static OrganizationSummaryResource toResourceFromPersistence(OrganizationPersistenceEntity entity) {
         var ownerName = entity.getRoles().stream()
-                .filter(r -> "Root Admin".equals(r.getName().value()))
+                .filter(r -> "Root".equals(r.getName().value()))
                 .findFirst()
                 .flatMap(r -> r.getMemberships().stream().findFirst())
                 .map(m -> m.getUser().getName().getFullName())

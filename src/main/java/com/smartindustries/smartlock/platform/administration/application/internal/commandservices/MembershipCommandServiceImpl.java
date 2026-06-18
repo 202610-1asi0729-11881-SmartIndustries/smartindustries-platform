@@ -48,7 +48,7 @@ public class MembershipCommandServiceImpl implements MembershipCommandService {
             }
 
             var currentRole = roleRepository.findById(membership.get().getRoleId());
-            if (currentRole.isPresent() && !currentRole.get().isDeletable()) {
+            if (currentRole.isPresent() && "Root".equals(currentRole.get().getName().value())) {
                 return Result.failure(ApplicationError.businessRuleViolation("Membership", "Cannot change the role of a root administrator"));
             }
 
