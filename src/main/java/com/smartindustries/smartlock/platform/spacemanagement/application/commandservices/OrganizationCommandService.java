@@ -4,9 +4,11 @@ import com.smartindustries.smartlock.platform.shared.application.result.Applicat
 import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Organization;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.CreateOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteOrganizationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateOrganizationInformationCommand;
 
 public interface OrganizationCommandService {
     Result<Organization, ApplicationError> handle(CreateOrganizationCommand command);
     Result<Organization, ApplicationError> handle(UpdateOrganizationInformationCommand command);
+    Result<Organization, ApplicationError> handle(DeleteOrganizationCommand command);
 }
