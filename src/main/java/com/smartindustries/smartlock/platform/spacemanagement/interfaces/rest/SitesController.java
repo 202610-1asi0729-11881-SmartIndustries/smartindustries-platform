@@ -1,8 +1,13 @@
 package com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest;
 
+import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
+import com.smartindustries.smartlock.platform.shared.application.result.Result;
+import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ErrorResponseAssembler;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ResponseEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.SiteCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.application.queryservices.SiteQueryService;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Site;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteSiteCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queries.GetSitesByOrganizationIdQuery;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.AddSiteToOrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.SiteResource;
@@ -126,5 +131,29 @@ public class SitesController {
                 result,
                 SiteResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{siteId}")
+    @Operation(
+        summary = "Delete site",
+        description = "Deletes a site."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Site deleted successfully"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Site not found"
+        )
+    })
+    public ResponseEntity<?> deleteSite(@PathVariable Long siteId) {
+        var result = siteCommandService.handle(new DeleteSiteCommand(siteId));
+        if (result instanceof Result.Success<Site, ApplicationError>) {
+            return ResponseEntity.noContent().build();
+        }
+        return ErrorResponseAssembler.toErrorResponseFromApplicationError(
+                ((Result.Failure<Site, ApplicationError>) result).error());
     }
 }
