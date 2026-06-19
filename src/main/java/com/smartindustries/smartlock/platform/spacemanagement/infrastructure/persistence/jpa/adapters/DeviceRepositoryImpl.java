@@ -29,4 +29,9 @@ public class DeviceRepositoryImpl implements DeviceRepository {
         var saved = jpaRepository.save(entity);
         return DevicePersistenceAssembler.toDomainFromPersistence(saved);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }
