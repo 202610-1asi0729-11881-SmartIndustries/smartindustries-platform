@@ -4,9 +4,11 @@ import com.smartindustries.smartlock.platform.shared.application.result.Applicat
 import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Site;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.AddSiteToOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteSiteCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateSiteInformationCommand;
 
 public interface SiteCommandService {
     Result<Site, ApplicationError> handle(AddSiteToOrganizationCommand command);
     Result<Site, ApplicationError> handle(UpdateSiteInformationCommand command);
+    Result<Site, ApplicationError> handle(DeleteSiteCommand command);
 }
