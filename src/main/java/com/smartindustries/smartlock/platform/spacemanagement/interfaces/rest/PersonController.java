@@ -1,8 +1,13 @@
 package com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest;
 
+import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
+import com.smartindustries.smartlock.platform.shared.application.result.Result;
+import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ErrorResponseAssembler;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ResponseEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.PersonCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.application.queryservices.PeopleQueryService;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Person;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeletePersonCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queries.GetPeopleByOrganizationIdQuery;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.AddPersonToOrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.PersonResource;
@@ -126,5 +131,29 @@ public class PersonController {
                 result,
                 PersonResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{personId}")
+    @Operation(
+        summary = "Delete person",
+        description = "Deletes a person."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Person deleted successfully"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Person not found"
+        )
+    })
+    public ResponseEntity<?> deletePerson(@PathVariable Long personId) {
+        var result = personCommandService.handle(new DeletePersonCommand(personId));
+        if (result instanceof Result.Success<Person, ApplicationError>) {
+            return ResponseEntity.noContent().build();
+        }
+        return ErrorResponseAssembler.toErrorResponseFromApplicationError(
+                ((Result.Failure<Person, ApplicationError>) result).error());
     }
 }

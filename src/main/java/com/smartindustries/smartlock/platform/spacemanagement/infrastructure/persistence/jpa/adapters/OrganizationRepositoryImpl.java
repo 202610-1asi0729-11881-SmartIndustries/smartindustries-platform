@@ -46,4 +46,9 @@ public class OrganizationRepositoryImpl implements OrganizationRepository {
     public boolean existsByName(GenericName name) {
         return jpaRepository.existsByName(name);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }

@@ -40,4 +40,9 @@ public class PersonRepositoryImpl implements PersonRepository {
         }
         return result;
     }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }

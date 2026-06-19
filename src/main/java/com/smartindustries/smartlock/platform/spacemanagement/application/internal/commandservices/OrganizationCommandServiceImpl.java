@@ -6,6 +6,7 @@ import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.G
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.OrganizationCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Organization;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.CreateOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteOrganizationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateOrganizationInformationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.repositories.OrganizationRepository;
 import org.springframework.stereotype.Service;
@@ -53,6 +54,21 @@ public class OrganizationCommandServiceImpl implements OrganizationCommandServic
             return Result.failure(ApplicationError.validationError("Organization", e.getMessage()));
         } catch (Exception e) {
             return Result.failure(ApplicationError.unexpected("organization-update", e.getMessage()));
+        }
+    }
+
+    @Override
+    public Result<Organization, ApplicationError> handle(DeleteOrganizationCommand command) {
+        try {
+            var organization = organizationRepository.findById(command.organizationId());
+            if (organization.isEmpty()) {
+                return Result.failure(ApplicationError.notFound("Organization", command.organizationId().toString()));
+            }
+
+            organizationRepository.deleteById(command.organizationId());
+            return Result.success(organization.get());
+        } catch (Exception e) {
+            return Result.failure(ApplicationError.unexpected("organization-deletion", e.getMessage()));
         }
     }
 }

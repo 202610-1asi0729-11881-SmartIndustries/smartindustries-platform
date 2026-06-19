@@ -29,4 +29,9 @@ public class SiteRepositoryImpl implements SiteRepository {
         var saved = jpaRepository.save(entity);
         return SitePersistenceAssembler.toDomainFromPersistence(saved);
     }
+
+    @Override
+    public void deleteById(Long id) {
+        jpaRepository.deleteById(id);
+    }
 }

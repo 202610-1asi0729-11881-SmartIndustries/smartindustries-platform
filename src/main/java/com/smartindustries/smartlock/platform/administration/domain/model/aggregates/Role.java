@@ -33,7 +33,7 @@ public class Role extends AbstractDomainAggregateRoot<Role> {
     public static Role createRoot(Long organizationId) {
         var role = new Role();
         role.organizationId = organizationId;
-        role.name = new GenericName("Root Admin");
+        role.name = new GenericName("Root");
         role.permissions = new RolePermissions(true, true, true);
         role.deletable = false;
         return role;

@@ -1,11 +1,14 @@
 package com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest;
 
 import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
+import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ErrorResponseAssembler;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ResponseEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.OrganizationCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.application.internal.outboundservices.acl.ExternalIamService;
 import com.smartindustries.smartlock.platform.spacemanagement.application.queryservices.OrganizationQueryService;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Organization;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteOrganizationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queries.GetOrganizationsByUserIdQuery;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.CreateOrganizationResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.OrganizationResource;
@@ -25,13 +28,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
@@ -160,5 +157,29 @@ public class OrganizationController {
                 result,
                 OrganizationResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{organizationId}")
+    @Operation(
+        summary = "Delete organization",
+        description = "Deletes an organization. All related data (roles, sites, devices, people) is also removed via cascade."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Organization deleted successfully"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Organization not found"
+        )
+    })
+    public ResponseEntity<?> deleteOrganization(@PathVariable Long organizationId) {
+        var result = organizationCommandService.handle(new DeleteOrganizationCommand(organizationId));
+        if (result instanceof Result.Success<Organization, ApplicationError>) {
+            return ResponseEntity.noContent().build();
+        }
+        return ErrorResponseAssembler.toErrorResponseFromApplicationError(
+                ((Result.Failure<Organization, ApplicationError>) result).error());
     }
 }

@@ -7,4 +7,5 @@ import java.util.Optional;
 public interface SiteRepository {
     Optional<Site> findById(Long id);
     Site save(Site site);
+    void deleteById(Long id);
 }
