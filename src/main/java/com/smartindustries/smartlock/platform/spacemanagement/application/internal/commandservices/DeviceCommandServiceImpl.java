@@ -5,6 +5,7 @@ import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.DeviceCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Device;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.ConnectDeviceToSiteCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteDeviceCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdateDeviceInformationCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.repositories.DeviceRepository;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.repositories.SiteRepository;
@@ -57,6 +58,21 @@ public class DeviceCommandServiceImpl implements DeviceCommandService {
             return Result.failure(ApplicationError.validationError("Device", e.getMessage()));
         } catch (Exception e) {
             return Result.failure(ApplicationError.unexpected("device-update", e.getMessage()));
+        }
+    }
+
+    @Override
+    public Result<Device, ApplicationError> handle(DeleteDeviceCommand command) {
+        try {
+            var device = deviceRepository.findById(command.deviceId());
+            if (device.isEmpty()) {
+                return Result.failure(ApplicationError.notFound("Device", command.deviceId().toString()));
+            }
+
+            deviceRepository.deleteById(command.deviceId());
+            return Result.success(device.get());
+        } catch (Exception e) {
+            return Result.failure(ApplicationError.unexpected("device-deletion", e.getMessage()));
         }
     }
 }
