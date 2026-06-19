@@ -12,8 +12,10 @@ import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.Email;
 import com.smartindustries.smartlock.platform.shared.domain.model.valueobjects.Password;
 import org.apache.commons.lang3.tuple.ImmutablePair;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 public class UserCommandServiceImpl implements UserCommandService {
 
@@ -42,8 +44,10 @@ public class UserCommandServiceImpl implements UserCommandService {
             var token = tokenService.generateToken(user.get().getEmail().address());
             return Result.success(ImmutablePair.of(user.get(), token));
         } catch (IllegalArgumentException e) {
+            log.error("Validation error during sign-in", e);
             return Result.failure(ApplicationError.validationError("User", e.getMessage()));
         } catch (Exception e) {
+            log.error("Unexpected error during sign-in", e);
             return Result.failure(ApplicationError.unexpected("sign-in", e.getMessage()));
         }
     }
@@ -64,8 +68,10 @@ public class UserCommandServiceImpl implements UserCommandService {
                     .<Result<User, ApplicationError>>map(Result::success)
                     .orElseGet(() -> Result.failure(ApplicationError.unexpected("sign-up", "Created user could not be reloaded")));
         } catch (IllegalArgumentException e) {
+            log.error("Validation error during sign-up", e);
             return Result.failure(ApplicationError.validationError("User", e.getMessage()));
         } catch (Exception e) {
+            log.error("Unexpected error during sign-up", e);
             return Result.failure(ApplicationError.unexpected("sign-up", e.getMessage()));
         }
     }
