@@ -4,9 +4,11 @@ import com.smartindustries.smartlock.platform.shared.application.result.Applicat
 import com.smartindustries.smartlock.platform.shared.application.result.Result;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Person;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.AddPersonToOrganizationCommand;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeletePersonCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.UpdatePersonInformationCommand;
 
 public interface PersonCommandService {
     Result<Person, ApplicationError> handle(AddPersonToOrganizationCommand command);
     Result<Person, ApplicationError> handle(UpdatePersonInformationCommand command);
+    Result<Person, ApplicationError> handle(DeletePersonCommand command);
 }
