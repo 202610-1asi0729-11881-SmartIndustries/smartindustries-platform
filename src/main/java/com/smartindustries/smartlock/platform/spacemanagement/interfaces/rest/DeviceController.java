@@ -1,8 +1,13 @@
 package com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest;
 
+import com.smartindustries.smartlock.platform.shared.application.result.ApplicationError;
+import com.smartindustries.smartlock.platform.shared.application.result.Result;
+import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ErrorResponseAssembler;
 import com.smartindustries.smartlock.platform.shared.interfaces.rest.transform.ResponseEntityAssembler;
 import com.smartindustries.smartlock.platform.spacemanagement.application.commandservices.DeviceCommandService;
 import com.smartindustries.smartlock.platform.spacemanagement.application.queryservices.DeviceQueryService;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.aggregates.Device;
+import com.smartindustries.smartlock.platform.spacemanagement.domain.model.commands.DeleteDeviceCommand;
 import com.smartindustries.smartlock.platform.spacemanagement.domain.model.queries.GetDevicesByOrganizationIdQuery;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.ConnectDeviceToSiteResource;
 import com.smartindustries.smartlock.platform.spacemanagement.interfaces.rest.resources.DeviceResource;
@@ -127,5 +132,29 @@ public class DeviceController {
                 result,
                 DeviceResourceFromEntityAssembler::toResourceFromEntity,
                 HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{deviceId}")
+    @Operation(
+        summary = "Delete device",
+        description = "Deletes a device."
+    )
+    @ApiResponses(value = {
+        @ApiResponse(
+            responseCode = "204",
+            description = "Device deleted successfully"
+        ),
+        @ApiResponse(
+            responseCode = "404",
+            description = "Device not found"
+        )
+    })
+    public ResponseEntity<?> deleteDevice(@PathVariable Long deviceId) {
+        var result = deviceCommandService.handle(new DeleteDeviceCommand(deviceId));
+        if (result instanceof Result.Success<Device, ApplicationError>) {
+            return ResponseEntity.noContent().build();
+        }
+        return ErrorResponseAssembler.toErrorResponseFromApplicationError(
+                ((Result.Failure<Device, ApplicationError>) result).error());
     }
 }
